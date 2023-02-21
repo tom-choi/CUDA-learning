@@ -1,1 +1,1 @@
-# CUDA-learning
+# CudaLearning-2
