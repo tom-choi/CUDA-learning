@@ -3,9 +3,12 @@
 
 #include <iostream>
 #include <time.h>
+#include <float.h>
 
 #include "vec3.h"
 #include "ray.h"
+#include "sphere.h"
+#include "hitable_list.h"
 
 // limited version of checkCudaErrors from helper_cuda.h in CUDA examples
 #define checkCudaErrors(val) check_cuda( (val), #val, __FILE__, __LINE__ )
@@ -29,19 +32,27 @@ __device__ bool hit_sphere(const vec3& center, float radius, const ray& r) {
     return (discriminant > 0.0f);
 }
 
-__device__ vec3 color(const ray& r)
+__device__ vec3 color(const ray& r, hitable** world)
 {
-    if (hit_sphere(vec3(0, 0, -1), 0.5, r))
-        return vec3(1, 0, 0);
-    vec3 unit_direction = unit_vector(r.direction());
-    float t = 0.5f * (unit_direction.y() + 1.0f);
-    return (1.0f - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+    hit_record rec;
+    if ((*world)->hit(r, 0.0, FLT_MAX, rec))
+    {
+        return 0.5 * vec3(rec.normal.x() + 1.0f,
+            rec.normal.y() + 1.0f,
+            rec.normal.z() + 1.0f);
+    }
+    else
+    {
+        vec3 unit_direction = unit_vector(r.direction());
+        float t = 0.5f * (unit_direction.y() + 1.0f);
+        return (1.0f - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+    }
 }
-
 
 // float fb ---> vec3 fb
 __global__ void render(vec3* fb, int max_x, int max_y,
-    vec3 lower_left_corner, vec3 horizontal, vec3 vertical, vec3 origin
+    vec3 lower_left_corner, vec3 horizontal, vec3 vertical, vec3 origin,
+    hitable **world
 ) 
 {
     int i = threadIdx.x + blockIdx.x * blockDim.x;
@@ -54,7 +65,23 @@ __global__ void render(vec3* fb, int max_x, int max_y,
     float v = float(j) / float(max_y);
 
     ray r(origin, lower_left_corner + u * horizontal + v * vertical);
-    fb[pixel_index] = color(r);
+    fb[pixel_index] = color(r,world);
+}
+
+__global__ void create_world(hitable** d_list, hitable** d_world)
+{
+    if (threadIdx.x == 0 && blockIdx.x == 0)
+    {
+        *(d_list) = new sphere(vec3(0, 0, -1), 0.5);
+        *(d_list + 1) = new sphere(vec3(0, -100.5, -1), 100);
+        *d_world = new hitable_list(d_list, 2);
+    }
+}
+
+__global__ void free_world(hitable** d_list, hitable** d_world) {
+    delete* (d_list);
+    delete* (d_list + 1);
+    delete* d_world;
 }
 
 int main()
@@ -76,20 +103,28 @@ int main()
     vec3* fb;
     checkCudaErrors(cudaMallocManaged((void**)&fb, fb_size));
     
+    // make our world of hitables
+    hitable** d_list;
+    checkCudaErrors(cudaMalloc((void**)&d_list, 2 * sizeof(hitable*)));
+    hitable** d_world;
+    checkCudaErrors(cudaMalloc((void**)&d_world, sizeof(hitable*)));
+    create_world<<<1,1>>>(d_list, d_world);
+    checkCudaErrors(cudaGetLastError());
+    checkCudaErrors(cudaDeviceSynchronize());
+
     clock_t start, stop;
     start = clock();
 
     // Render our buffer
     dim3 blocks(nx / tx + 1, ny / ty + 1);
-    // 8 * 8
     dim3 threads(tx, ty);
     // 固定寫法
-    render<<<blocks, threads >>>(fb, nx, ny,
+    render<<<blocks, threads>>>(fb, nx, ny,
         vec3(-2.0, -1.0, -1.0),
         vec3(4.0, 0.0, 0.0),
         vec3(0.0, 2.0, 0.0),
-        vec3(0.0, 0.0, 0.0)
-        );
+        vec3(0.0, 0.0, 0.0),
+        d_world);
     checkCudaErrors(cudaGetLastError());
     checkCudaErrors(cudaDeviceSynchronize());
     stop = clock();
@@ -108,6 +143,15 @@ int main()
         }
     }
 
+    // clearup
+    checkCudaErrors(cudaDeviceSynchronize());
+    free_world<<<1,1>>>(d_list, d_world);
+    checkCudaErrors(cudaGetLastError());
+    checkCudaErrors(cudaFree(d_list));
+    checkCudaErrors(cudaFree(d_world));
     checkCudaErrors(cudaFree(fb));
+
+    // useful for cuda-memcheck --leak-check full
+    cudaDeviceReset();
 
 }
