@@ -17,6 +17,10 @@ public:
 	__host__ __device__ inline float y() const { return e[1]; }
 	__host__ __device__ inline float z() const { return e[2]; }
 	// 多寫一個rgb以備不時之需
+	// 這裡以後會改寫 main.cu 中的rgb函數返回值
+	// float r = fb[pixel_index + 0];
+	// float g = fb[pixel_index + 1];
+	// float b = fb[pixel_index + 2];
 	__host__ __device__ inline float r() const { return e[0]; }
 	__host__ __device__ inline float g() const { return e[1]; }
 	__host__ __device__ inline float b() const { return e[2]; }
