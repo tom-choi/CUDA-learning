@@ -8,3 +8,4 @@
 x64/Debug/CudaLearning-2.exe
 *.exe
 *.vsidx
+*.deps

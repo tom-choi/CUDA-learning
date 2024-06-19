@@ -1,8 +1,8 @@
 ﻿  Compiling CUDA source file kernel.cu...
   
-  D:\C++\CudaLearning-2\CudaLearning-2>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\bin\HostX64\x64" -x cu   -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0\include" -I"F:\hac_tool\IncludeLibrary\vcpkg\vcpkg\installed\x64-windows\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0\include"  -G   --keep-dir x64\Debug  -maxrregcount=0  --machine 64 --compile -cudart static  -g  -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /FS /Zi /RTC1 /MDd " -Xcompiler "/Fdx64\Debug\vc143.pdb" -o D:\C++\CudaLearning-2\CudaLearning-2\x64\Debug\kernel.cu.obj "D:\C++\CudaLearning-2\CudaLearning-2\kernel.cu" 
+  D:\github\CUDA-learning\CudaLearning-2>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\bin\HostX64\x64" -x cu   -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0\include" -I"F:\hac_tool\IncludeLibrary\vcpkg\vcpkg\installed\x64-windows\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0\include"  -G   --keep-dir x64\Debug  -maxrregcount=0  --machine 64 --compile -cudart static  -g  -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /FS /Zi /RTC1 /MDd " -Xcompiler "/Fdx64\Debug\vc143.pdb" -o D:\github\CUDA-learning\CudaLearning-2\x64\Debug\kernel.cu.obj "D:\github\CUDA-learning\CudaLearning-2\kernel.cu" 
+CUDACOMPILE : ptxas warning : Stack size for entry function '_Z6renderP4vec3iiiPP6cameraPP7hitableP17curandStateXORWOW' cannot be statically determined
   kernel.cu
-  tmpxft_00006674_00000000-7_kernel.cudafe1.cpp
-     正在建立程式庫 D:\C++\CudaLearning-2\x64\Debug\CudaLearning-2.lib 和物件 D:\C++\CudaLearning-2\x64\Debug\CudaLearning-2.exp
-LINK : warning LNK4098: 預設的程式庫 'LIBCMT' 與其他使用的程式庫衝突，請使用 /NODEFAULTLIB:library
-  CudaLearning-2.vcxproj -> D:\C++\CudaLearning-2\x64\Debug\CudaLearning-2.exe
+  tmpxft_00006718_00000000-7_kernel.cudafe1.cpp
+D:\github\CUDA-learning\CudaLearning-2\vec3.h(73): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+  CudaLearning-2.vcxproj -> D:\github\CUDA-learning\x64\Debug\CudaLearning-2.exe

@@ -3,6 +3,7 @@
 
 #include "hitable.h"
 
+
 class hitable_list : public hitable {
 public:
     __device__ hitable_list() {}

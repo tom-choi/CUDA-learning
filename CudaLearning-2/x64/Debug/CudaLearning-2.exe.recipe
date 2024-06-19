@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\C++\CudaLearning-2\x64\Debug\CudaLearning-2.exe</FullPath>
+      <FullPath>D:\github\CUDA-learning\x64\Debug\CudaLearning-2.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
